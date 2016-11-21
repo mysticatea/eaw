@@ -9,4 +9,7 @@
 // Requirements and exports
 //------------------------------------------------------------------------------
 
-module.exports.isNarrowCharacter = require("./lib/is-narrow-character")
+module.exports = {
+    getWidth: require("./lib/get-width"),
+    isNarrowCharacter: require("./lib/is-narrow-character"),
+}
