@@ -1,0 +1,4 @@
+{
+    "root": true,
+    "extends": ["mysticatea", "mysticatea/node"]
+}

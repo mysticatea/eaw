@@ -1,0 +1,5 @@
+{
+    "only": "/test/*.js",
+    "presets": ["power-assert"],
+    "sourceMaps": "inline"
+}

@@ -1,0 +1,49 @@
+{
+  "name": "eaw",
+  "version": "1.0.0",
+  "description": "The Node.js module to calculate the width of east Asian characters.",
+  "bin": "bin/index.js",
+  "main": "index.js",
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "engines": {
+    "node": ">=4"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "babel-preset-power-assert": "^1.0.0",
+    "babel-register": "^6.18.0",
+    "eslint": "^3.10.2",
+    "eslint-config-mysticatea": "^7.0.1",
+    "mocha": "^3.1.2",
+    "nyc": "^9.0.1",
+    "opener": "^1.4.2",
+    "power-assert": "^1.4.2",
+    "rimraf": "^2.5.4"
+  },
+  "scripts": {
+    "build": "node scripts/generate.js",
+    "clean": "rimraf .nyc_output coverage",
+    "coverage": "nyc report --reporter lcov && opener coverage/lcov-report/index.html",
+    "lint": "eslint bin lib scripts index.js",
+    "postbuild": "npm test",
+    "postversion": "git push && git push --tags",
+    "pretest": "npm run lint",
+    "preversion": "npm run clean && npm test",
+    "test": "nyc --requre babel-register -- mocha \"test/*.js\" --progress",
+    "watch": "npm run test -- --watch --growl"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mysticatea/eaw.git"
+  },
+  "keywords": [],
+  "author": "Toru Nagashima",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mysticatea/eaw/issues"
+  },
+  "homepage": "https://github.com/mysticatea/eaw#readme"
+}
