@@ -12,4 +12,5 @@
 module.exports = {
     getWidth: require("./lib/get-width"),
     isNarrowCharacter: require("./lib/is-narrow-character"),
+    split: require("./lib/split"),
 }

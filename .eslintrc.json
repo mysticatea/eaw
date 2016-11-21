@@ -1,4 +1,7 @@
 {
     "root": true,
-    "extends": ["mysticatea", "mysticatea/node"]
+    "extends": ["mysticatea", "mysticatea/node"],
+    "rules": {
+        "prefer-spread": "off"
+    }
 }
