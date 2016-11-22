@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 module.exports = {
+    createSplitStream: require("./lib/create-split-stream"),
     createWidthStream: require("./lib/create-width-stream"),
     getWidth: require("./lib/get-width"),
     isNarrowCharacter: require("./lib/is-narrow-character"),
