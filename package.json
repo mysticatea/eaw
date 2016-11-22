@@ -6,7 +6,8 @@
   "main": "index.js",
   "files": [
     "bin",
-    "lib"
+    "lib",
+    "browser.js"
   ],
   "engines": {
     "node": ">=4"
