@@ -1,6 +1,6 @@
 {
   "name": "eaw",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The Node.js module to calculate the width of east Asian characters.",
   "bin": "bin/eaw.js",
   "main": "index.js",
