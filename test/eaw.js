@@ -185,4 +185,28 @@ describe("eaw command", () => {
             assert(result.stderr === "")
         })
     )
+
+    it("should exit with 1 if unknown options were given.", () =>
+        run(["abc"]).then(result => {
+            assert(result.exitCode === 1)
+            assert(result.stdout === "")
+            assert(/Usage: eaw/.test(result.stderr))
+        })
+    )
+
+    it("should exit with 1 if unknown options were given.", () =>
+        run(["--abc"]).then(result => {
+            assert(result.exitCode === 1)
+            assert(result.stdout === "")
+            assert(/Usage: eaw/.test(result.stderr))
+        })
+    )
+
+    it("should exit with 1 if invalid --split option were given.", () =>
+        run(["--split", "abc"]).then(result => {
+            assert(result.exitCode === 1)
+            assert(result.stdout === "")
+            assert(/Invalid `--split`/.test(result.stderr))
+        })
+    )
 })
