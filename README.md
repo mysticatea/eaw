@@ -73,27 +73,27 @@ process.stdin
     .pipe(process.stdout)
 ```
 
-#### eaw.getWidth(characters: string): number
+#### eaw.getWidth(characters: string, widthOfWideCharacters?: number = 2): number
+
+#### eaw.getWidth(characters: string[], widthOfWideCharacters?: number = 2): number[]
+
+#### eaw.getWidth(characters: Iterable&lt;string>, widthOfWideCharacters?: number = 2): Iterable&lt;number>
 
 It returns the total width of the given characters.
 
-#### eaw.getWidth(characters: string[]): number[]
+#### eaw.split(characters: string, maxPerLine: number, widthOfWideCharacters?: number = 2): string[]
 
-It returns the total width of each given characters.
+#### eaw.split(characters: string[], maxPerLine: number, widthOfWideCharacters?: number = 2): string[]
 
-#### eaw.split(characters: string, maxPerLine: number): string[]
-
-It splits the given characters to make the width of each line shorter than the given number.
-
-#### eaw.split(characters: string[], maxPerLine: number): string[]
+#### eaw.split(characters: Iterable&lt;string>, maxPerLine: number, widthOfWideCharacters?: number = 2): Iterable&lt;string>
 
 It splits the given characters to make the width of each line shorter than the given number.
 
-#### eaw.createWidthStream(): [stream.Transform]
+#### eaw.createWidthStream(widthOfWideCharacters?: number = 2): [stream.Transform]
 
 It returns the transform stream to calculate the width of each line.
 
-#### eaw.createSplitStream(maxPerLine: number): [stream.Transform]
+#### eaw.createSplitStream(maxPerLine: number, widthOfWideCharacters?: number = 2): [stream.Transform]
 
 It returns the transform stream to split the given characters to make the width of each line shorter than the given number.
 
