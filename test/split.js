@@ -13,6 +13,20 @@ const assert = require("assert")
 const split = require("../").split
 
 //------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
+
+/**
+ * It converts the given array to an iterable object.
+ *
+ * @param {any[]} array - The array to convert.
+ * @returns {IterableIterator<any>} The iterable object of the array.
+ */
+function* toIterable(array) {
+    yield* array
+}
+
+//------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
@@ -91,6 +105,25 @@ describe("split function", () => {
                 ),
                 [].concat.apply([], patterns.map(x => x[2][i]))
             )
+        })
+    }
+
+    for (let i = 0; i < patterns[0][1].length; ++i) {
+        it(`should return the iterable object of ${
+            JSON.stringify([].concat.apply([], patterns.map(x => x[1][i])))
+        } if the iterable object of ${
+            JSON.stringify(patterns.map(x => x[0]))
+        } with ${3 + i} was given.`, () => {
+            const expected = [].concat.apply([], patterns.map(x => x[1][i]))
+            const result = split(toIterable(patterns.map(x => x[0])), 3 + i)
+
+            assert(!Array.isArray(result))
+
+            let j = 0
+            for (const line of result) {
+                assert(line === expected[j++])
+            }
+            assert(j === expected.length)
         })
     }
 })

@@ -13,6 +13,20 @@ const assert = require("assert")
 const getWidth = require("../").getWidth
 
 //------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
+
+/**
+ * It converts the given array to an iterable object.
+ *
+ * @param {any[]} array - The array to convert.
+ * @returns {IterableIterator<any>} The iterable object of the array.
+ */
+function* toIterable(array) {
+    yield* array
+}
+
+//------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
@@ -58,5 +72,22 @@ describe("getWidth function", () => {
             getWidth(patterns.map(x => x[0]), 1.5),
             patterns.map(x => x[2])
         )
+    })
+
+    it(`should return the iterable object of ${
+        JSON.stringify(patterns.map(x => x[1]))
+    } if the iterable object of ${
+        JSON.stringify(patterns.map(x => x[0]))
+    } was given.`, () => {
+        const result = getWidth(toIterable(patterns.map(x => x[0])))
+
+        assert(!Array.isArray(result))
+
+        let i = 0
+        for (const width of result) {
+            assert(width === patterns[i++][1])
+        }
+
+        assert(i === patterns.length)
     })
 })
