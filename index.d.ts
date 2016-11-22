@@ -6,12 +6,6 @@
 
 import {Transform} from "stream"
 
+export {getWidth, isNarrowCharacter, split} from "./browser"
 export function createSplitStream(maxPerLine: number, widthOfWideCharacter?: number): Transform
 export function createWidthStream(widthOfWideCharacter?: number): Transform
-export function getWidth(text: string, widthOfWideCharacter?: number): number
-export function getWidth(texts: string[], widthOfWideCharacter?: number): number[]
-export function getWidth(texts: Iterable<string>, widthOfWideCharacter?: number): IterableIterator<number>
-export function isNarrowCharacter(character: string): boolean
-export function split(text: string, maxPerLine: number, widthOfWideCharacter?: number): string[]
-export function split(texts: string[], maxPerLine: number, widthOfWideCharacter?: number): string[]
-export function split(texts: Iterable<string>, maxPerLine: number, widthOfWideCharacter?: number): IterableIterator<string>
