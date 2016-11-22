@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 const assert = require("assert")
+const EOL = require("os").EOL
 const createSplitStream = require("../").createSplitStream
 
 //------------------------------------------------------------------------------
@@ -56,7 +57,7 @@ describe("split function", () => {
 
             let j = 0
             stream.on("data", (line) => {
-                assert(line === expected[j++])
+                assert(line === `${expected[j++]}${EOL}`)
             })
             stream.on("end", () => {
                 assert(j === expected.length)
@@ -83,7 +84,7 @@ describe("split function", () => {
 
             let j = 0
             stream.on("data", (line) => {
-                assert(line === expected[j++])
+                assert(line === `${expected[j++]}${EOL}`)
             })
             stream.on("end", () => {
                 assert(j === expected.length)

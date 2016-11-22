@@ -2,7 +2,7 @@
   "name": "eaw",
   "version": "0.0.0",
   "description": "The Node.js module to calculate the width of east Asian characters.",
-  "bin": "bin/index.js",
+  "bin": "bin/eaw.js",
   "main": "index.js",
   "files": [
     "bin",
@@ -12,7 +12,9 @@
   "engines": {
     "node": ">=4"
   },
-  "dependencies": {},
+  "dependencies": {
+    "minimist": "^1.2.0"
+  },
   "devDependencies": {
     "babel-preset-power-assert": "^1.0.0",
     "babel-register": "^6.18.0",
