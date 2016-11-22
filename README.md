@@ -8,8 +8,12 @@
 
 The Node.js module to calculate the width of east Asian characters. (based on Unicode 9.0.0)
 
-The script of this module is generated with [EastAsianWidth.txt] Unicode Character Database provides.
-The generator script is [./scripts/generate.js].
+The script of this module is generated with [EastAsianWidth.txt] that Unicode Character Database provides.
+
+- The generator script is [./scripts/generate.js].
+- The generated script is [./lib/is-narrow-character.js].
+
+The generator script is used to **maintain** this module as following to latest Unicode.
 
 ## 💿 Installation
 
@@ -59,9 +63,13 @@ This module provides Node.js module.
 ```js
 const eaw = require("eaw")
 
-console.log(eaw.getWidth("hello, 世界")) // → 11
-console.log(eaw.getWidth(["hello, 世界", "🌟❤"])) // → [11, 4]
-console.log(eaw.split("hello, 世界", 4)) // → ["hell", "o, ", "世界"]
+console.log(eaw.isNarrowCharacter("A"))              // → true
+console.log(eaw.isNarrowCharacter("あ"))             // → false
+console.log(eaw.getWidth("A"))                       // → 1
+console.log(eaw.getWidth("あ"))                      // → 2
+console.log(eaw.getWidth("hello, 世界"))             // → 11
+console.log(eaw.getWidth(["hello, 世界", "🌟❤"]))   // → [11, 4]
+console.log(eaw.split("hello, 世界", 4))             // → ["hell", "o, ", "世界"]
 console.log(eaw.split(["hello, 世界", "🌟❤👍"], 4)) // → ["hell", "o, ", "世界", "🌟❤", "👍"]
 
 process.stdin
@@ -73,27 +81,29 @@ process.stdin
     .pipe(process.stdout)
 ```
 
-#### eaw.getWidth(characters: string, widthOfWideCharacters?: number = 2): number
+> eaw.isNarrowCharacter(character: string): boolean
 
-#### eaw.getWidth(characters: string[], widthOfWideCharacters?: number = 2): number[]
+It checks whether the given character is a narrow character or not.
 
-#### eaw.getWidth(characters: Iterable&lt;string>, widthOfWideCharacters?: number = 2): Iterable&lt;number>
+This function checks the first code point if the argument has 2 or more characters.
+
+> eaw.getWidth(characters: string, widthOfWideCharacters?: number = 2): number<br>
+> eaw.getWidth(characters: string[], widthOfWideCharacters?: number = 2): number[]<br>
+> eaw.getWidth(characters: Iterable&lt;string>, widthOfWideCharacters?: number = 2): Iterable&lt;number>
 
 It returns the total width of the given characters.
 
-#### eaw.split(characters: string, maxPerLine: number, widthOfWideCharacters?: number = 2): string[]
-
-#### eaw.split(characters: string[], maxPerLine: number, widthOfWideCharacters?: number = 2): string[]
-
-#### eaw.split(characters: Iterable&lt;string>, maxPerLine: number, widthOfWideCharacters?: number = 2): Iterable&lt;string>
+> eaw.split(characters: string, maxPerLine: number, widthOfWideCharacters?: number = 2): string[]<br>
+> eaw.split(characters: string[], maxPerLine: number, widthOfWideCharacters?: number = 2): string[]<br>
+> eaw.split(characters: Iterable&lt;string>, maxPerLine: number, widthOfWideCharacters?: number = 2): Iterable&lt;string>
 
 It splits the given characters to make the width of each line shorter than the given number.
 
-#### eaw.createWidthStream(widthOfWideCharacters?: number = 2): [stream.Transform]
+> eaw.createWidthStream(widthOfWideCharacters?: number = 2): [stream.Transform]
 
 It returns the transform stream to calculate the width of each line.
 
-#### eaw.createSplitStream(maxPerLine: number, widthOfWideCharacters?: number = 2): [stream.Transform]
+> eaw.createSplitStream(maxPerLine: number, widthOfWideCharacters?: number = 2): [stream.Transform]
 
 It returns the transform stream to split the given characters to make the width of each line shorter than the given number.
 
@@ -118,6 +128,7 @@ Please use GitHub's issues/PRs.
 
 [EastAsianWidth.txt]: http://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
 [./scripts/generate.js]: ./scripts/generate.js
+[./lib/is-narrow-character.js]: ./lib/is-narrow-character.js
 [npm]: https://www.npmjs.com/
 [browserify]: http://browserify.org/
 [stream.Transform]: https://nodejs.org/api/stream.html#stream_class_stream_transform
