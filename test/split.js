@@ -126,4 +126,8 @@ describe("split function", () => {
             assert(j === expected.length)
         })
     }
+
+    it("should return [\"あ\",\"い\",\"う\",\"え\",\"お\"] if (\"あいうえお\", 1) was given.", () => {
+        assert.deepEqual(split("あいうえお", 1), ["あ", "い", "う", "え", "お"])
+    })
 })
