@@ -1,6 +1,12 @@
 # eaw
 
-The Node.js module to calculate the width of east Asian characters.
+[![npm version](https://img.shields.io/npm/v/eaw.svg)](https://www.npmjs.com/package/eaw)
+[![Downloads/month](https://img.shields.io/npm/dm/eaw.svg)](http://www.npmtrends.com/eaw)
+[![Build Status](https://travis-ci.org/mysticatea/eaw.svg?branch=master)](https://travis-ci.org/mysticatea/eaw)
+[![Coverage Status](https://codecov.io/gh/mysticatea/eaw/branch/master/graph/badge.svg)](https://codecov.io/gh/mysticatea/eaw)
+[![Dependency Status](https://david-dm.org/mysticatea/eaw.svg)](https://david-dm.org/mysticatea/eaw)
+
+The Node.js module to calculate the width of east Asian characters. (based on Unicode 9.0.0)
 
 The script of this module is generated with [EastAsianWidth.txt] Unicode Character Database provides.
 The generator script is [./scripts/generate.js].
