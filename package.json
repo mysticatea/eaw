@@ -42,7 +42,17 @@
     "type": "git",
     "url": "git+https://github.com/mysticatea/eaw.git"
   },
-  "keywords": [],
+  "keywords": [
+    "unicode",
+    "character",
+    "width",
+    "east",
+    "asian",
+    "text",
+    "string",
+    "transform",
+    "stream"
+  ],
   "author": "Toru Nagashima",
   "license": "MIT",
   "bugs": {
