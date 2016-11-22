@@ -38,7 +38,7 @@
     "postversion": "git push && git push --tags",
     "pretest": "npm run lint",
     "preversion": "npm run clean && npm test",
-    "test": "nyc --require babel-register -- mocha \"test/*.js\" --reporter progress",
+    "test": "nyc --require babel-register -- mocha \"test/*.js\" --reporter progress --timeout 10000",
     "watch": "npm run test -- --watch --growl"
   },
   "repository": {
