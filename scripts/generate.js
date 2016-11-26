@@ -5,6 +5,8 @@
  */
 "use strict"
 
+/*eslint-disable no-console */
+
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
@@ -20,8 +22,7 @@ const path = require("path")
 
 const UCD_URL = "http://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt"
 const FILENAME = path.resolve(__dirname, "../lib/is-narrow-character.js")
-const LINE_TERMINATORS = /\r\n|\r|\n|\u2028|\u2029/g
-const ROW_PATTERN = /^(\w+)(?:..(\w+))?;(\w+)$/
+const ROW_PATTERN = /^(\w+)(?:..(\w+))?;(\w+)\s*(?:#.*)?$/gm
 
 /**
  * It checks whether the given type is narrow or not.
@@ -50,13 +51,17 @@ function toHex(n) {
  */
 function fetchUnicodeCharacterData() {
     return new Promise((resolve, reject) => {
+        console.log("Fetching:", UCD_URL)
+
         http.get(UCD_URL, (res) => {
             const chunks = []
 
             res.on("data", (chunk) => {
+                console.log("  Received", chunk.length, "bytes.")
                 chunks.push(chunk)
             })
             res.on("end", () => {
+                console.log("  Done.")
                 const text = Buffer.concat(chunks).toString("utf8")
 
                 if (res.statusCode === 200) {
@@ -75,71 +80,102 @@ function fetchUnicodeCharacterData() {
  * It parses the content of Unicode Character Database.
  *
  * @param {string} content - The content to parse.
- * @returns {Array.<{first: number, last: number, type: string}>}
+ * @returns {IterableIterator<{first: number, last: number, type: string}>}
  *  The result of parsing.
  */
-function parseUnicodeCharacterData(content) {
-    return content.split(LINE_TERMINATORS)
-        .map(line => line.replace(/#.+/, "").trim())
-        .map(line => {
-            const m = ROW_PATTERN.exec(line)
-            if (m != null) {
-                const first = parseInt(m[1], 16)
-                const last = m[2] ? parseInt(m[2], 16) : first
-                const type = m[3]
+function* parseUnicodeCharacterData(content) {
+    ROW_PATTERN.lastIndex = 0
+    let m = null
 
-                return {first, last, type}
-            }
-            return null
-        })
-        .filter(Boolean)
+    while ((m = ROW_PATTERN.exec(content)) != null) {
+        const first = parseInt(m[1], 16)
+        const last = m[2] ? parseInt(m[2], 16) : first
+        const type = m[3]
+
+        yield {first, last, type}
+    }
 }
 
 /**
  * It extracts the range of narrow characters.
  *
- * @param {Array.<{first: number, last: number, type: string}>} ranges -
+ * @param {Iterable<{first: number, last: number, type: string}>} ranges -
  *  The range of all characters.
- * @returns {Array.<{first: number, last: number}>}
+ * @returns {IterableIterator<{first: number, last: number}>}
  *  The range of narrow characters.
  */
-function extractNarrowRange(ranges) {
-    return ranges.reduce((result, range) => {
-        if (isNarrow(range.type)) {
-            const first = range.first
-            const last = range.last
+function* extractNarrowRange(ranges) {
+    let prevRange = null
 
-            if (result.length === 0) {
-                // 1st range.
-                result.push({first, last})
-            }
-            else {
-                // if the range is consecutive with the last range,
-                // it merges those.
-                const lastRange = result[result.length - 1]
-                if (lastRange.last === first - 1) {
-                    lastRange.last = last
-                }
-                else {
-                    result.push({first, last})
-                }
-            }
+    for (const range of ranges) {
+        if (!isNarrow(range.type)) {
+            continue
         }
 
-        return result
-    }, [])
+        const first = range.first
+        const last = range.last
+
+        if (prevRange == null) {
+            // 1st range.
+            prevRange = {first, last}
+        }
+        else if (prevRange.last === first - 1) {
+            // if the range is consecutive with the last range,
+            // it merges those.
+            prevRange.last = last
+        }
+        else {
+            console.log("Range:", prevRange.first, prevRange.last)
+            yield prevRange
+
+            prevRange = {first, last}
+        }
+    }
+
+    if (prevRange != null) {
+        console.log("Range:", prevRange.first, prevRange.last)
+        yield prevRange
+    }
+}
+
+/**
+ * It converts the given ranges to comparison code list.
+ *
+ * The comparison code list can be concatenated by `||` operators.
+ *
+ * @param {Iterable<{first: number, last: number}>} ranges -
+ *  The ranges to convert.
+ * @returns {IterableIterator<string>} The generated code.
+ */
+function* toComparisonCode(ranges) {
+    for (const range of ranges) {
+        const first = range.first
+        const last = range.last
+
+        if (first === last) {
+            yield `cp === ${toHex(first)}`
+        }
+        else if (first + 1 === last) {
+            yield `cp === ${toHex(first)}`
+            yield `cp === ${toHex(last)}`
+        }
+        else {
+            yield `(cp >= ${toHex(first)} && cp <= ${toHex(last)})`
+        }
+    }
 }
 
 /**
  * It generates the code which includes `isNarrowCharacter` function.
  *
- * @param {Array.<{first: number, last: number}>} ranges -
- *  The range of narrow characters.
+ * @param {Iterable<string>} comparisonCodes - The comparison codes.
  * @returns {string} The generated code.
  */
-function generateCode(ranges) {
+function generateCode(comparisonCodes) {
     return `/**
- * This code was generated by <../scripts/generate.js>
+ * @author Toru Nagashima <https://github.com/mysticatea>
+ * @copyright 2016 Toru Nagashima. All rights reserved.
+ * See LICENSE file in root directory for full license.
  */
 "use strict"
 
@@ -157,15 +193,7 @@ function generateCode(ranges) {
 module.exports = function isNarrowCharacter(character) {
     const cp = character.codePointAt(0)
     return (
-        ${
-            ranges
-                .map(range => `(cp >= ${
-                    toHex(range.first)
-                } && cp <= ${
-                    toHex(range.last)
-                })`)
-                .join(" ||\n        ")
-        }
+        ${Array.from(comparisonCodes).join(" ||\n        ")}
     )
 }
 
@@ -181,8 +209,11 @@ module.exports = function isNarrowCharacter(character) {
  */
 function writeFile(code) {
     return new Promise((resolve, reject) => {
+        console.log("Writing:", FILENAME)
+
         fs.writeFile(FILENAME, code, (err) => {
             if (err == null) {
+                console.log("  Done.")
                 resolve()
             }
             else {
@@ -199,8 +230,11 @@ function writeFile(code) {
 fetchUnicodeCharacterData()
     .then(parseUnicodeCharacterData)
     .then(extractNarrowRange)
+    .then(toComparisonCode)
     .then(generateCode)
     .then(writeFile)
     .catch(err => {
-        console.error(err.stack) //eslint-disable-line no-console
+        console.error(err.stack)
     })
+
+/*eslint-enable */

@@ -37,7 +37,6 @@
     "codecov": "nyc report --reporter lcovonly && codecov",
     "coverage": "nyc report --reporter lcov && opener coverage/lcov-report/index.html",
     "lint": "eslint bin lib scripts \"*.js\"",
-    "postbuild": "npm test",
     "postversion": "git push && git push --tags",
     "pretest": "npm run lint",
     "preversion": "npm run clean && npm test",
